@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.OpcionDao">
+
+
+	<insert id="insertar" parameterType="Opcion">
+	         
+		INSERT INTO opcion
+		(no_opci,vl_acci,id_opci_padr,id_tipo_opci,co_opci,id_usua_crea,
+		fe_usua_crea,de_term_crea,st_regi, nu_nivel)
+		VALUES
+		( #{nombreOpcion}, #{valorAccion}, #{idPadre}, #{tipoOpcion},
+		#{codigoOpcion}, #{idUsuarioCreacion}, #{fechaUsuarioCreacion},
+		#{terminalUsuarioCreacion},#{estadoRegistro},#{nivel})
+	</insert>
+
+	<update id="actualizar" parameterType="Opcion">
+		UPDATE opcion
+		SET
+		id_opci_padr = #{idPadre},
+		co_opci = #{codigoOpcion},
+		no_opci = #{nombreOpcion},
+		id_tipo_opci = #{tipoOpcion},
+		vl_acci = #{valorAccion},
+		st_regi = #{estadoRegistro},
+		id_usua_modi = #{idUsuarioModificacion},
+		fe_usua_modi = SYSDATE(),
+		de_term_modi = #{terminalUsuarioModificacion}
+		
+		WHERE id_opcion=#{idOpcion}
+	</update>
+	
+	<select id="obtener" parameterType="String" resultType="Opcion">
+		SELECT id_opcion AS idOpcion,
+		no_opci AS nombreOpcion,
+		vl_acci AS valorAccion,
+		id_opci_padr AS idPadre,
+		id_tipo_opci AS tipoOpcion,
+		co_opci AS codigoOpcion,
+		nu_nivel AS nivel,
+		id_usua_crea AS idUsuarioCreacion,
+		fe_usua_crea AS fechaUsuarioCreacion,
+		de_term_crea AS terminalUsuarioCreacion,
+		id_usua_modi AS idUsuarioModificacion,
+		fe_usua_modi AS fechaUsuarioModificacion,
+		de_term_modi AS terminalUsuarioModificacion,
+		st_regi AS estadoRegistro
+		FROM opcion
+		WHERE id_opcion = #{idOpcion}
+	</select>
+
+<select id="listarOpcionesPorUsuario" resultType="Opcion" >
+     SELECT o.id_opcion as idOpcion, o.no_opci as nombreOpcion, o.vl_acci as valorAccion, o.id_opci_padr as idPadre, 
+           o.id_tipo_opci as tipoOpcion, o.co_opci as codigoOpcion, o.NU_NIVEL as nivel , st_regi as estadoRegistro
+     FROM opcion o      
+     ORDER BY co_opci
+</select>
+
+<select id="listarOpcionesActivasPorUsuario" resultType="Opcion" >
+     SELECT o.id_opcion as idOpcion, o.no_opci as nombreOpcion, o.vl_acci as valorAccion, o.id_opci_padr as idPadre, 
+           o.id_tipo_opci as tipoOpcion, o.co_opci as codigoOpcion, o.nu_nivel as nivel , st_regi as estadoRegistro
+      FROM opcion o
+      WHERE st_regi='1'
+      ORDER BY co_opci
+</select>
+
+ <select id="listarOpcionesSeleccionadasPorPerfil" parameterType="Integer" resultType="Opcion" >
+     SELECT 
+          o.id_opcion as idOpcion
+        , o.no_opci as nombreOpcion
+        , o.vl_acci as valorAccion
+        , o.id_opci_padr as idPadre
+        , o.id_tipo_opci as tipoOpcion
+        , o.co_opci as codigoOpcion
+        , o.nu_nivel as nivel 
+        , st_regi as estadoRegistro
+        , (SELECT 
+                1 
+           FROM perfil_opcion po 
+           WHERE po.id_perfil = #{idPerfil}
+              AND po.id_opcion = o.id_opcion) AS estaSeleccionado
+      FROM opcion o
+       WHERE st_regi = '1'
+      ORDER BY co_opci
+ </select>
+
+
+<select id="obtenerNombrePadre" resultType="String" parameterType="String">
+    SELECT o.no_opci,o.id_opci_padr as idPadre 
+    FROM opcion o
+    WHERE o.co_opci = #{idPadre}		
+</select>
+
+
+<select id="obtenerIdOpcionSgte" resultType="String" parameterType="Opcion">
+	SELECT MAX(o.co_opci)
+	FROM      opcion o
+	WHERE     o.nu_nivel = #{nivel}
+	AND       o.id_opci_padr = #{idPadre}
+	
+</select>
+
+<select id="obtenerCantOpcion" resultType="int" parameterType="Opcion">
+ 	  SELECT COUNT(*)
+      FROM   opcion o
+      WHERE	o.nu_nivel = #{nivel}
+      AND o.id_opci_padr = #{idPadre}
+</select>
+
+<select id="obtenerCantOpcionNivelCero" resultType="int">
+ 	  SELECT COUNT(*)
+      FROM   opcion o
+      WHERE	o.nu_nivel = 0
+      
+</select>
+
+
+<update id="darBajaOpcion" parameterType="Opcion">
+    UPDATE opcion o
+    SET    o.st_regi = '0'
+	WHERE o.co_opci = #{codigoOpcion}  
+<!-- 	SUBSTR(o.co_opci,0,(#{nivel}+1)*3) = SUBSTR(#{codigoOpcion},0,(#{nivel}+1)*3) -->
+	AND o.st_regi = '1'
+</update>
+
+<select id="obtenerNivelPadre" resultType="int" parameterType="String">
+	SELECT o.nu_nivel as nivel
+	FROM opcion o
+	WHERE o.co_opci =  #{idPadre}
+</select>
+
+</mapper>

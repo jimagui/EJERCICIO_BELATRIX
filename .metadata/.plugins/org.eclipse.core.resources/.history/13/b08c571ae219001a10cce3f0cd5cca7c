@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.TipoCobroDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="TipoCobro">
+	     {call insertarTipoCobro(	        
+			#{descripcion},
+			#{tipoPago},
+			#{montoCobrar},		
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idTipoCobro , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="TipoCobro">
+	     {call actualizarTipoCobro(
+	        #{idTipoCobro},
+			#{descripcion},
+			#{tipoPago},
+			#{montoCobrar},	
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="TipoCobro" statementType="CALLABLE" parameterType="Integer">
+		{call listarTipoCobro(#{idTipoCobro},null,null)}
+	</select>
+	
+	<select id="listarTipoCobro" resultType="TipoCobro" statementType="CALLABLE" parameterType="TipoCobro">
+		{call listarTipoCobro(#{idTipoCobro},#{stRegi},#{tipoPago})}
+	</select>
+		
+	<update id="eliminarTipoCobro"  statementType="CALLABLE"  parameterType="TipoCobro">
+	    {call eliminarTipoCobro(#{idTipoCobro},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	
+	
+</mapper>

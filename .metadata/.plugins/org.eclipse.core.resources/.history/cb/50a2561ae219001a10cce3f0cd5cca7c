@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.ProveedorDao">
+    		
+	<insert id="insertar" statementType="CALLABLE"  parameterType="Proveedor">   
+		{call insertarProveedor(	        
+			#{sigla},
+			#{nombre},
+			#{descripcion},
+			#{idTipoDocumento},		
+			#{nroDocumento},		
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idProveedor , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	   
+    </insert>  
+	
+	<update id="actualizar" statementType="CALLABLE"  parameterType="Proveedor">         
+        {call actualizarProveedor(
+        	#{idProveedor},
+	        #{sigla},
+			#{nombre},
+			#{descripcion},
+			#{idTipoDocumento},
+			#{nroDocumento},	
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+    </update>  
+		
+	<select id="obtener" resultType="Proveedor" statementType="CALLABLE" parameterType="Integer">
+		{call listarProveedor(#{idProveedor},null)}
+	</select>
+		
+	<select id="listarProveedor" resultType="Proveedor" statementType="CALLABLE" parameterType="Proveedor">
+		{call listarProveedor(#{idProveedor},#{stRegi})}
+	</select>
+		
+	<update id="eliminarProveedor" statementType="CALLABLE"  parameterType="Proveedor"> 
+        {call eliminarProveedor(#{idProveedor},#{idUsuaModi},#{deTermModi})}   
+	</update>
+	
+	<select id="existeProveedor" resultType="Integer" statementType="CALLABLE"  parameterType="HashMap">				
+		{call existProveedor(#{nroDocumento})}
+	</select>
+	
+	
+</mapper>

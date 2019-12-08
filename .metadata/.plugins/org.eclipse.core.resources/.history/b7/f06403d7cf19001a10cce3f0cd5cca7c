@@ -1,0 +1,30 @@
+package pe.com.sisgedo.core.util;
+
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.util.Date;
+
+import pe.com.sisgedo.core.entity.AlmacenUsuario;
+
+public class pruebaMain {
+	
+
+
+	public static void main(String[] args) {
+	    Conexion con= Conexion.getInstancia("mysql","10.240.147.30", "3306","dbalmacen", "almacen", "123456");
+	    try {
+	    	
+      		con.conectar();		
+      		con.ejecutarUpdateQuery("insert into Log_ Values('ERROR 06/12/2019 ','1') ");
+	        con.desconectar();
+	        
+	    } catch (SQLException e) {			
+			e.printStackTrace();
+		}
+	    
+	    
+	  
+	    
+	}
+
+}

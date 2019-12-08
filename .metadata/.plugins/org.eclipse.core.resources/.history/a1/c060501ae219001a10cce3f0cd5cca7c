@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.ComercianteDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="Comerciante">
+	     {call insertarComerciante(
+	        #{idMercado},
+			#{nombre},
+			#{apellidoPaterno},
+			#{apellidoMaterno},
+			#{idTipoDocumento},
+			#{nroDocumento},
+			#{razonSocial},
+			#{placa},
+			#{idTipoCobro},
+			#{tieneVehiculo},
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idComerciante , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="Comerciante">
+	     {call actualizarComerciante(
+	        #{idComerciante},
+			#{idMercado},
+			#{nombre},
+			#{apellidoPaterno},
+			#{apellidoMaterno},
+			#{idTipoDocumento},
+			#{nroDocumento},
+			#{razonSocial},
+			#{placa},
+			#{idTipoCobro},
+			#{tieneVehiculo},
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="Comerciante" statementType="CALLABLE" parameterType="Integer">
+		{call listarComerciante(#{idComerciante},null,null)}
+	</select>
+	
+	<select id="listarComerciante" resultType="Comerciante" statementType="CALLABLE" parameterType="Comerciante">
+		{call listarComerciante(#{idComerciante},#{stRegi},#{idMercado})}
+	</select>
+	
+	
+	<select id="listarGestionComerciante" resultType="Comerciante" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionComerciante(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarGestionComercianteSinPago" resultType="Comerciante" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionComercianteSinPago(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarGestionComercianteConPago" resultType="Comerciante" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionComercianteConPago(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<update id="eliminarComerciante"  statementType="CALLABLE"  parameterType="Comerciante">
+	    {call eliminarComerciante(#{idComerciante},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	<select id="existeComerciante" resultType="Integer" statementType="CALLABLE" parameterType="HashMap">
+		{call existeComerciante(#{nroDocumento},#{tipoPago})}
+	</select>
+	
+	
+</mapper>

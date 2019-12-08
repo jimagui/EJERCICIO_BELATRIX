@@ -1,0 +1,55 @@
+package pe.com.sisgedo.core.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
+
+public class Conexion {
+	   private static Conexion instancia;
+	   
+	   private String serverName;
+	   private String portNumber;
+	   private String userName;
+	   private String password;
+	   private String dbms;
+	   private String database;
+	   
+	   private Connection connection = null;
+   
+	   private Conexion(String dbms, String serverName,String portNumber,String database,String  userName,String password){
+		   this.dbms = dbms;
+		   this.serverName = serverName;
+		   this.portNumber = portNumber;
+		   this.database = database;
+		   this.userName = userName;
+		   this.password = password;
+	   }
+   
+	   public static Conexion getInstancia(String dbms,String serverName,String portNumber,String database,String  userName,String password){
+		   if(instancia==null)
+			   instancia = new Conexion(dbms,serverName,portNumber,database,userName,password);
+		   return instancia;
+	   }
+	   
+	   public void conectar()  throws SQLException{
+		   
+			  Properties connectionProps = new Properties();
+			  connectionProps.put("user", userName);
+			  connectionProps.put("password",password);
+	  		  connection = DriverManager.getConnection("jdbc:" + dbms + "://" + serverName
+						+ ":" + portNumber + "/"+database, connectionProps);
+			
+	   }
+	   
+	   public void desconectar()  throws SQLException{	 
+		   connection.close();			
+	   }
+	   
+	   public int ejecutarUpdateQuery(String query) throws SQLException{
+		   Statement stmt = connection.createStatement();
+		   return stmt.executeUpdate(query);
+	   }
+	
+}

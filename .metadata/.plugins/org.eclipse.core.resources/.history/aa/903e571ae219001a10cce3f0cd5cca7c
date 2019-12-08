@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.SolicitudMaterialDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="SolicitudMaterial">
+	     {call insertarSolicitudMaterial(
+	        #{codigoSolicitud},
+			#{idServicio},
+			#{idSolicitante},
+			#{idAlmacen},
+			#{idEstadoSolicitud},
+			#{fechaSolicitud},
+			#{cantidadTotal},			
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idSolicitud , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="SolicitudMaterial">
+	     {call actualizarSolicitudMaterial(
+	        #{idSolicitud},
+			#{codigoSolicitud},
+			#{idServicio},
+			#{idSolicitante},
+			#{idAlmacen},
+			#{idEstadoSolicitud},
+			#{fechaSolicitud},
+			#{cantidadTotal},
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="SolicitudMaterial" statementType="CALLABLE" parameterType="Integer">
+		{call listarSolicitudMaterial(#{idSolicitud},null,null,null,null,null,null,null,null,null)}
+	</select>
+	
+	<select id="listarSolicitudMaterial" resultType="SolicitudMaterial" statementType="CALLABLE" parameterType="SolicitudMaterial">
+		{call listarSolicitudMaterial(#{idSolicitud},#{codigoSolicitud},#{idServicio},#{idSolicitante},#{idAlmacen},#{idTipoServicio},#{idEstadoSolicitud},#{fechaInicioSolicitud},#{fechaFinSolicitud},#{stRegi})}
+	</select>
+			
+	<update id="eliminarSolicitudMaterial"  statementType="CALLABLE"  parameterType="SolicitudMaterial">
+	    {call eliminarSolicitudMaterial(#{idSolicitud},#{idUsuaModi},#{deTermModi})}
+	</update>
+		
+</mapper>

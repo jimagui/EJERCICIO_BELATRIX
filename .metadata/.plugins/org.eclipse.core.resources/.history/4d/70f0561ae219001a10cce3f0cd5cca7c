@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.ServicioDao">
+    		
+	<insert id="insertar" statementType="CALLABLE"  parameterType="Servicio">   
+		{call insertarServicio(	        
+			#{idTipoServicio},
+			#{nombre},
+			#{descripcion},	
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idServicio , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	   
+    </insert>  
+	
+	<update id="actualizar" statementType="CALLABLE"  parameterType="Servicio">         
+        {call actualizarServicio(
+        	#{idServicio},
+	        #{idTipoServicio},
+			#{nombre},
+			#{descripcion},
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+    </update>  
+		
+	<select id="obtener" resultType="Servicio" statementType="CALLABLE" parameterType="Integer">
+		{call listarServicio(#{idServicio},null)}
+	</select>
+		
+	<select id="listarServicio" resultType="Servicio" statementType="CALLABLE" parameterType="Servicio">
+		{call listarServicio(#{idServicio},#{stRegi})}
+	</select>
+		
+	<update id="eliminarServicio" statementType="CALLABLE"  parameterType="Servicio"> 
+        {call eliminarServicio(#{idServicio},#{idUsuaModi},#{deTermModi})}   
+	</update>
+	
+	<select id="existeServicio" resultType="Integer" statementType="CALLABLE"  parameterType="HashMap">				
+		{call existServicio(#{nombre})}
+	</select>
+	
+	
+</mapper>

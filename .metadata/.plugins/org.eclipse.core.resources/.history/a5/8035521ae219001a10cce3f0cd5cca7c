@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.DetalleParametroDao">
+
+	<resultMap id="detalleParametroResultMap" type="DetalleParametro">
+        <id property="nsDetalleParametro"				column="ns_det_parametro" />        
+ 		<result property="nsParametro"					column="ns_parametro"/>
+        <result property="descripcionDetalleParametro"	column="de_det_parametro"/>
+        <result property="valorDato01"			column="vl_dato_01"/>
+        <result property="valorDato02"			column="vl_dato_02"/>
+        <result property="valorDato03"			column="vl_dato_03"/>
+        <result property="valorDato04"			column="vl_dato_04"/>
+        <result property="valorDato05"			column="vl_dato_05"/>
+        <result property="valorDato06"			column="vl_dato_06"/>
+        <result property="valorDato07"			column="vl_dato_07"/>
+        <result property="valorDato08"			column="vl_dato_08"/>
+        <result property="valorDato09"			column="vl_dato_09"/>
+        <result property="valorDato10"			column="vl_dato_10"/>
+        <result property="tipoDatoParametro"	column="co_tipo_dato"/>
+        <result property="numeroOrdenParametro"	column="ns_orden"/>
+        <result property="descripcionCorta"		column="de_corta"/>
+        <result property="vlInfoLarga"			column="vl_info_larga"/>    
+    	<result property="inProteccion"			column="in_protegido"/> 
+    	
+    	<result property="stRegi"			    column="st_regi"/> 
+    	<result property="estadoRegistro"		column="estadoRegistro"/> 
+        
+    </resultMap>
+	
+	<select id="obtener" resultMap="detalleParametroResultMap" parameterType="Long"> 
+	  SELECT * FROM DETALLE_PARAMETRO d 
+	  WHERE   d.ns_det_parametro = #{nsDetalleParametro}
+	</select>
+	    
+	<select id="listarTodos" resultMap="detalleParametroResultMap" parameterType="HashMap">
+		SELECT 	d.*,
+				p.in_protegido,
+				case d.st_regi
+		        when '1' then 'Activo'
+		        when '0' then 'Inactivo' 
+		        end as estadoRegistro
+				
+		FROM 	DETALLE_PARAMETRO d 
+		INNER JOIN PARAMETRO p
+			ON p.ns_parametro = d.ns_parametro
+		WHERE 	d.st_regi = 1
+		<if test="nsParametro != null"> AND d.ns_parametro = #{nsParametro}</if>
+		<if test="nsDetalleParametro != null"> AND d.ns_det_parametro = #{nsDetalleParametro}</if>
+		order by d.NS_DET_PARAMETRO desc
+	</select>
+	
+	<select id="listarTipoServicio" resultMap="detalleParametroResultMap">
+		SELECT 	d.ns_det_parametro, d.de_det_parametro
+		FROM 	sisgedo.DETALLE_PARAMETRO d 
+		WHERE 	d.ns_parametro = 1 and d.vl_dato_01 = 'REGULAR' and d.st_regi = 1
+	</select>
+	
+	<select id="obtenerParametrosCorreo" parameterType="HashMap" resultType="DetalleParametro">
+		SELECT dp.vl_dato_01 AS valorDato01,
+		       dp.vl_dato_02 AS valorDato02,
+		       dp.vl_dato_03 AS valorDato03,
+		       dp.vl_dato_04 AS valorDato04,
+ 		       dp.vl_dato_05 AS valorDato05
+		  FROM sisgedo.detalle_parametro dp
+		 WHERE dp.ns_parametro = #{idGenerico}
+		   AND dp.ns_det_parametro = #{idGeneDet}
+		   AND dp.st_regi = #{stRegi}
+    </select> 
+    
+<!--     <insert id="insertar" parameterType="DetalleParametro" statementType="CALLABLE"> -->
+<!-- 	   {call sisgedo.pkg_proceso.sp_ins_detalle_parametro( -->
+<!-- 		       #{nsDetalleParametro, javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT} -->
+<!-- 		      ,#{nsParametro} -->
+<!-- 		      ,#{descripcionDetalleParametro} -->
+<!-- 			  ,#{idUsuaCrea} -->
+<!-- 			  ,#{feUsuaCrea, javaType=java.sql.Timestamp, jdbcType=DATE, mode=OUT} -->
+<!-- 		      ,#{deTermCrea} -->
+<!-- 		      ,#{valorDato01} -->
+<!-- 			  ,#{valorDato02} -->
+<!-- 			  ,#{valorDato03} -->
+<!-- 			  ,#{valorDato04} -->
+<!-- 			  ,#{valorDato05} -->
+<!-- 			  ,#{valorDato06} -->
+<!-- 			  ,#{valorDato07} -->
+<!-- 			  ,#{valorDato08} -->
+<!-- 			  ,#{valorDato09} -->
+<!-- 			  ,#{valorDato10} -->
+<!-- 		      ,#{tipoDatoParametro} -->
+<!-- 		      ,#{numeroOrdenParametro} -->
+<!-- 		      ,#{descripcionCorta} -->
+<!-- 		      ,#{vlInfoLarga} -->
+<!-- 	   )} -->
+<!--     </insert>   -->
+    
+    <insert id="insertar" parameterType="DetalleParametro"  useGeneratedKeys="true" keyProperty="nsDetalleParametro"  >
+       
+        insert into  DETALLE_PARAMETRO
+		        (
+		           NS_PARAMETRO 	
+		         , ST_REGI 		    
+		         , ID_USUA_CREA     
+		         , FE_USUA_CREA     
+		         , DE_TERM_CREA     
+		         , VL_DATO_01       
+		         , VL_DATO_02       
+		         , VL_DATO_03       
+		         , VL_DATO_04       
+		         , VL_DATO_05       
+		         , VL_DATO_06       
+		         , VL_DATO_07       
+		         , VL_DATO_08       
+		         , VL_DATO_09       
+		         , VL_DATO_10       
+		         , CO_TIPO_DATO       
+		         , NS_ORDEN                  
+		         , DE_CORTA              
+		         , VL_INFO_LARGA
+		         , DE_DET_PARAMETRO )
+			values(
+			     #{nsParametro}			
+				,#{stRegi} 
+				,#{idUsuaCrea}  
+				,NOW()
+				,#{deTermCrea} 
+				,#{valorDato01}       
+				,#{valorDato02}      
+				,#{valorDato03}       
+				,#{valorDato04}       
+				,#{valorDato05}       
+				,#{valorDato06}       
+				,#{valorDato07}       
+				,#{valorDato08}       
+				,#{valorDato09}       
+				,#{valorDato10}       
+				,#{tipoDatoParametro}   
+				,#{numeroOrdenParametro}
+				,#{descripcionCorta}    
+				,#{vlInfoLarga}   
+				,#{descripcionDetalleParametro} 							
+			)
+        
+    </insert>  
+    
+<!--     <update id="actualizar" parameterType="DetalleParametro" statementType="CALLABLE"> -->
+<!-- 	   {call sisgedo.pkg_proceso.sp_upd_detalle_parametro( -->
+<!-- 		       #{nsDetalleParametro} -->
+<!-- 		      ,#{nsParametro} -->
+<!-- 		      ,#{descripcionDetalleParametro} -->
+<!-- 		      ,#{stRegi} -->
+<!-- 		      ,#{idUsuaModi} -->
+<!-- 			  ,#{feUsuaModi, javaType=java.sql.Timestamp, jdbcType=DATE, mode=OUT} -->
+<!-- 		      ,#{deTermModi} -->
+<!-- 		      ,#{valorDato01} -->
+<!-- 			  ,#{valorDato02} -->
+<!-- 			  ,#{valorDato03} -->
+<!-- 			  ,#{valorDato04} -->
+<!-- 			  ,#{valorDato05} -->
+<!-- 			  ,#{valorDato06} -->
+<!-- 			  ,#{valorDato07} -->
+<!-- 			  ,#{valorDato08} -->
+<!-- 			  ,#{valorDato09} -->
+<!-- 			  ,#{valorDato10} -->
+<!-- 		      ,#{tipoDatoParametro} -->
+<!-- 		      ,#{numeroOrdenParametro} -->
+<!-- 		      ,#{descripcionCorta} -->
+<!-- 		      ,#{vlInfoLarga} -->
+<!-- 	   )} -->
+<!--     </update>   -->
+    
+     <update id="actualizar" parameterType="DetalleParametro" >    
+		      UPDATE DETALLE_PARAMETRO
+		        SET
+		           NS_PARAMETRO 	= #{nsParametro}		         
+		         , ST_REGI 		    = #{stRegi} 
+		         , ID_USUA_MODI     = #{idUsuaModi}  
+		         , FE_USUA_MODI     = NOW()
+		         , DE_TERM_MODI     = #{deTermModi} 
+		         , VL_DATO_01       = #{valorDato01}       
+		         , VL_DATO_02       = #{valorDato02}      
+		         , VL_DATO_03       = #{valorDato03}       
+		         , VL_DATO_04       = #{valorDato04}       
+		         , VL_DATO_05       = #{valorDato05}       
+		         , VL_DATO_06       = #{valorDato06}       
+		         , VL_DATO_07       = #{valorDato07}       
+		         , VL_DATO_08       = #{valorDato08}       
+		         , VL_DATO_09       = #{valorDato09}       
+		         , VL_DATO_10       = #{valorDato10}       
+		         , CO_TIPO_DATO     = #{tipoDatoParametro}     
+		         , NS_ORDEN         = #{numeroOrdenParametro}         
+		         , DE_CORTA         = #{descripcionCorta} 
+		         , DE_DET_PARAMETRO = #{descripcionDetalleParametro}         
+		         , VL_INFO_LARGA    = #{vlInfoLarga}    
+		   WHERE NS_DET_PARAMETRO = #{nsDetalleParametro}  
+   </update> 
+   
+   <update id="eliminar" parameterType="Long" >
+      update DETALLE_PARAMETRO set ST_REGI=0 WHERE
+	  NS_DET_PARAMETRO=#{nsDetalleParametro} ;
+   </update> 
+    <!-- Inicio WSMaestros -->
+		
+	<resultMap id="resultadoBusqueda" type="java.util.Map">
+	</resultMap>
+	<parameterMap id="parametrosBusqueda" type="java.util.Map">
+		<parameter property="resultado"				jdbcType="CURSOR"	javaType="java.sql.ResultSet"	mode="OUT"	resultMap="resultadoBusqueda"/>
+    </parameterMap> 
+	<select id="listaParametros" statementType="CALLABLE" parameterMap="parametrosBusqueda">
+		{ CALL sisgedo.PKG_WS.lista_parametros(?) }
+	</select>
+	
+   <select id="existeDetalleParametro" resultType="Integer" statementType="CALLABLE" parameterType="HashMap">
+		{call existeDetalleParametro(#{descripcionCorta})}
+	</select>
+	
+	
+	<!-- EQUIVALENCIA UNIDAD MEDIDA - INICIO -->
+	<delete id="eliminarEquivalencia" parameterType="HashMap" >
+	   delete from equivalencia where idUnidadBase = #{idUnidadBase} 
+	                             and  idUnidadConversion = ifnull(#{idUnidadConversion},idUnidadConversion)
+	</delete>
+	<insert id="insertarEquivalencia" parameterType="HashMap">
+	   insert into  equivalencia (idUnidadBase,factor,idUnidadConversion) 
+	          values(#{idUnidadBase} ,#{factor} ,#{idUnidadConversion} ) 
+	</insert>
+	<select id="obtenerEquivalencia" parameterType="HashMap" resultType="HashMap">
+	   select eq.*, dp.DE_CORTA as unidadBase , dp2.DE_CORTA as unidadConversion
+	   from equivalencia eq  
+	   inner join detalle_parametro dp  on eq.idUnidadBase = dp.NS_DET_PARAMETRO
+	   inner join detalle_parametro dp2 on eq.idUnidadConversion = dp2.NS_DET_PARAMETRO
+	   where idUnidadBase = ifnull(#{idUnidadBase},idUnidadBase) 
+	         and  idUnidadConversion = ifnull(#{idUnidadConversion},idUnidadConversion)
+	</select>
+	<!-- EQUIVALENCIA UNIDAD MEDIDA - FIN -->
+	
+</mapper>

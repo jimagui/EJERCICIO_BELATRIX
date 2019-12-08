@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pe.com.sisgedo.core.dao.PerfilDao">
+
+	<select id="listarTodos" resultType="Perfil">
+		SELECT 
+			  u.no_perf AS nombre
+			, u.de_perf AS descripcion
+		 	, if(st_regi='0','Inactivo','Activo') AS estadoRegistro
+			, u.id_perfil as idPerfil 
+			, u.in_supervisor as inSupervisor
+		FROM perfil u
+		ORDER BY u.no_perf ASC
+	</select>
+
+	<resultMap id="listaComboResultMap" type="HashMap">
+		<id property="id" column="id_perfil" />
+		<result property="descripcion" column="no_perf" />
+	</resultMap>
+	
+	<select id="listarComboPerfiles" resultMap="listaComboResultMap">
+		SELECT 
+			  p.id_perfil
+			, p.no_perf
+		FROM perfil p
+		WHERE p.st_regi='1'
+		ORDER BY p.no_perf asc
+	</select>
+	
+	<select id="listarComboPerfilesNoAsignados" resultMap="listaComboResultMap"
+		parameterType="Integer">
+		SELECT p.id_perfil, p.no_perf
+		FROM perfil p
+		WHERE NOT EXISTS (SELECT 1 FROM usuario_perfil up WHERE
+		up.id_perfil=p.id_perfil AND up.id_usuario=#{idUsuario})
+		AND p.st_regi='1'
+		ORDER BY p.no_perf asc
+	</select>
+	
+	<select id="listarComboPerfilesAsignados" resultMap="listaComboResultMap"
+		parameterType="Integer">
+		SELECT p.id_perfil, p.no_perf
+		FROM perfil p
+		WHERE EXISTS (SELECT 1 FROM usuario_perfil up WHERE
+		up.id_perfil=p.id_perfil AND up.id_usuario=#{idUsuario})
+		AND p.st_regi='1'
+		ORDER BY p.no_perf asc
+	</select>
+
+	<select id="listar" parameterType="Map" resultType="Perfil">
+		SELECT 
+			  u.no_perf AS nombre
+			, u.de_perf AS descripcion
+			,IF(u.st_regi = '0','Inactivo', 'Activo') AS estadoRegistro
+			, u.id_perfil as idPerfil
+			, u.in_supervisor as inSupervisor
+		FROM perfil u
+		<where>
+			<if test="nombre != '' ">
+				u.no_perf Like #{nombre} || '%'
+			</if>
+			<if test="estadoRegistro != '' ">
+				AND u.st_regi = #{estadoRegistro}
+			</if>
+		</where>
+		ORDER BY u.no_perf ASC
+	</select>
+
+	<select id="obtenerPerfil" parameterType="Map" resultType="Perfil">
+		SELECT u.no_perf AS nombre, u.de_perf AS descripcion, u.st_regi AS
+		estadoRegistro, u.id_perfil as idPerfil, u.in_supervisor as inSupervisor
+		FROM perfil u
+		WHERE u.id_perfil = #{id}
+	</select>
+
+	<select id="listarOpcionesPorPerfil" parameterType="Integer"
+		resultType="Opcion">
+		SELECT 
+			p.id_opcion as idOpcion
+		FROM perfil_opcion p
+		WHERE p.id_perfil = #{id}
+	</select>
+
+	<insert id="insertar" parameterType="Perfil" useGeneratedKeys="true" keyProperty="idPerfil">		
+		INSERT INTO PERFIL
+		(no_perf, de_perf, id_usua_crea, fe_usua_crea, de_term_crea, st_regi,
+		in_supervisor)
+		VALUES
+		(#{nombre}, #{descripcion},
+		#{idUsuarioCreacion},#{fechaUsuarioCreacion}, #{terminalCreacion},
+		'1', #{inSupervisor})
+	</insert>
+
+	<update id="actualizar" parameterType="Perfil">
+		UPDATE PERFIL
+			set 
+				  no_perf = #{nombre} 
+				, de_perf = #{descripcion}
+				, in_supervisor = #{inSupervisor}
+				<if test="estadoRegistro != null ">,st_regi= #{estadoRegistro}</if>
+				, id_usua_modi = #{idUsuarioModificacion}
+				, fe_usua_modi = #{fechaUsuarioModificacion}
+				, de_term_modi = #{terminalModificacion}
+		where id_perfil = #{idPerfil}
+	</update>
+
+	<update id="eliminar" parameterType="Integer">
+		UPDATE PERFIL
+			set 
+				st_regi='0'
+		where id_perfil= #{idPerfil}
+	</update>
+
+	<select id="existePerfilRegistrado" resultType="Integer"
+		parameterType="String">
+		SELECT DISTINCT 1 FROM perfil u
+		WHERE u.no_perf=#{nombre}
+	</select>
+
+	<delete id="eliminarOpcionPerfil" parameterType="int">
+		DELETE FROM perfil_opcion
+		WHERE id_perfil = #{idPerfil}
+	</delete>
+
+	<insert id="insertarOpcionPerfil" parameterType="map">
+		INSERT INTO perfil_opcion
+		(id_perfil, id_opcion, st_regi, id_usua_crea, fe_usua_crea,de_term_crea)
+		VALUES
+		(#{idPerfil}, #{idOpcion},#{estadoRegistro}, #{idUsuarioCreacion},
+		#{fechaUsuarioCreacion}, #{terminalCreacion})
+	</insert>
+
+</mapper>

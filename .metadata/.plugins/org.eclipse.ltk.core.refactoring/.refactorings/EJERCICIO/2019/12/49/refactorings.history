@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;EJERCICIO/pom2.xml&apos; to &apos;pom.xml&apos;" description="Rename resource &apos;pom2.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="pom2.xml" name="pom.xml" stamp="1575826389349" updateReferences="true"/>
+</session>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.GestionPagoDao">
+    
+    
+    <insert id="insertar" statementType="CALLABLE"  parameterType="GestionPago">
+	     {call insertarGestionPago(
+	        #{idUsuario},
+			#{idComerciante},
+			#{idMercado},
+			#{idTipoCarro},
+			#{placa},
+			#{montoPagado},
+			#{tipoPago},
+			#{fechaPagado},
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idGestionPago , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="GestionPago">
+	     {call actualizarGestionPago(
+	        #{idGestionPago},
+			#{idUsuario},
+			#{idComerciante},
+			#{idMercado},
+			#{idTipoCarro},
+			#{placa},
+			#{montoPagado},
+			#{tipoPago},
+			#{fechaPagado},
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="listarGestionPago" resultType="GestionPago" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionPago(#{idMercado},#{tipoPago},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarRecaudadorMonto" resultType="GestionPago" statementType="CALLABLE" parameterType="HashMap">
+		{call listarRecaudadorMonto(#{tipoPago},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	
+	<update id="eliminarGestionPago"  statementType="CALLABLE"  parameterType="GestionPago">
+	    {call eliminarGestionPago(#{idGestionPago},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	
+</mapper>

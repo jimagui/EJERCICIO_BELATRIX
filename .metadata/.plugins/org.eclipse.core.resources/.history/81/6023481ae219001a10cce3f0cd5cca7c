@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.AlmacenUsuarioDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="AlmacenUsuario">
+	     {call insertarAlmacenUsuario(
+	        #{idAlmacen},
+			#{idUsuario},			
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idAlmacenUsuario , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="AlmacenUsuario">
+	     {call actualizarAlmacenUsuario(
+	        #{idAlmacenUsuario},
+			#{idAlmacen},
+			#{idUsuario},
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="AlmacenUsuario" statementType="CALLABLE" parameterType="Integer">
+		{call listarAlmacenUsuario(#{idAlmacenUsuario},null,null,null)}
+	</select>
+	
+	<select id="listarAlmacenUsuario" resultType="AlmacenUsuario" statementType="CALLABLE" parameterType="HashMap">
+		{call listarAlmacenUsuario(#{idAlmacenUsuario},#{idAlmacen},#{idUsuario},#{stRegi})}
+	</select>
+	
+	<select id="listarUsuarioNoAsocAlmacen" resultType="AlmacenUsuario" statementType="CALLABLE" parameterType="HashMap">
+		{call listarUsuarioNoAsocAlmacen(#{idAlmacen})}
+	</select>
+	
+	<update id="eliminarAlmacenUsuario"  statementType="CALLABLE"  parameterType="AlmacenUsuario">
+	    {call eliminarAlmacenUsuario(#{idAlmacenUsuario},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	<update id="eliminarTodosUsuarios"  statementType="CALLABLE"  parameterType="Integer">
+	    {call eliminarTodosUsuarios(#{idAlmacen})}
+	</update>
+	
+	<!-- 	<select id="existeAlmacenUsuario" resultType="Integer" statementType="CALLABLE" parameterType="HashMap"> -->
+<!-- 		{call existeComerciante(#{nroDocumento},#{tipoPago})} -->
+<!-- 	</select> -->
+
+</mapper>

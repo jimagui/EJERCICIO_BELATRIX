@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.OrdenCompraDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="OrdenCompra">
+	     {call insertarOrdenCompra(
+	        #{codigoOrden , javaType=java.lang.String, jdbcType=VARCHAR, mode=OUT},	        
+			#{idProveedor},
+			#{fechaOrden},
+			#{fechaProcesado},
+			#{cantidadMaterialTotal},
+			#{montoTotal},			
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idOrdenCompra , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="OrdenCompra">
+	     {call actualizarOrdenCompra(
+	        #{idOrdenCompra},
+			#{codigoOrden},
+			#{idProveedor},
+			#{fechaOrden},
+			#{fechaProcesado},
+			#{cantidadMaterialTotal},
+			#{montoTotal},			
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="OrdenCompra" statementType="CALLABLE" parameterType="Integer">
+		{call listarOrdenCompra(#{idOrdenCompra},null,null,null,null,null)}
+	</select>
+	
+	<select id="listarOrdenCompra" resultType="OrdenCompra" statementType="CALLABLE" parameterType="HashMap">
+		{call listarOrdenCompra(#{idOrdenCompra},#{stRegi},#{fechaInicioOrden},#{fechaFinOrden},#{fechaInicioProcesado},#{fechaFinProcesado})}
+	</select>
+		
+	<update id="eliminarOrdenCompra"  statementType="CALLABLE"  parameterType="OrdenCompra">
+	    {call eliminarOrdenCompra(#{idOrdenCompra},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	<select id="existeOrdenCompra" resultType="Integer" statementType="CALLABLE" parameterType="HashMap">
+		{call existeOrdenCompra(#{nroDocumento},#{tipoPago})}
+	</select>
+	
+	
+	
+</mapper>

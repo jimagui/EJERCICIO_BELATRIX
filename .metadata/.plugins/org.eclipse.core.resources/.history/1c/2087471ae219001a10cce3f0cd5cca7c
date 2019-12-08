@@ -1,0 +1,4 @@
+#MENSAJES ERROR GOOGLE
+#=========================
+google.distancia.noencontrada=Distancia y duración de tramo no encontrada
+google.error.servicio=Error al obtener valores del servicio de Google Maps, revise si las coordenadas son válidas.

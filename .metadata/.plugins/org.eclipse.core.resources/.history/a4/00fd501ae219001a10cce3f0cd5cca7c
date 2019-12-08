@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.DetalleIngresoMaterialDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="DetalleIngresoMaterial">
+	     {call insertarDetalleIngresoMaterial(
+	        #{idMercado},
+			#{nombre},
+			#{apellidoPaterno},
+			#{apellidoMaterno},
+			#{idTipoDocumento},
+			#{nroDocumento},
+			#{razonSocial},
+			#{placa},
+			#{idTipoCobro},
+			#{tieneVehiculo},
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idDetalleIngresoMaterial , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="DetalleIngresoMaterial">
+	     {call actualizarDetalleIngresoMaterial(
+	        #{idDetalleIngresoMaterial},
+			#{idMercado},
+			#{nombre},
+			#{apellidoPaterno},
+			#{apellidoMaterno},
+			#{idTipoDocumento},
+			#{nroDocumento},
+			#{razonSocial},
+			#{placa},
+			#{idTipoCobro},
+			#{tieneVehiculo},
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="DetalleIngresoMaterial" statementType="CALLABLE" parameterType="Integer">
+		{call listarDetalleIngresoMaterial(#{idDetalleIngresoMaterial},null,null)}
+	</select>
+	
+	<select id="listarDetalleIngresoMaterial" resultType="DetalleIngresoMaterial" statementType="CALLABLE" parameterType="DetalleIngresoMaterial">
+		{call listarDetalleIngresoMaterial(#{idDetalleIngresoMaterial},#{stRegi},#{idMercado})}
+	</select>
+	
+	
+	<select id="listarGestionDetalleIngresoMaterial" resultType="DetalleIngresoMaterial" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionDetalleIngresoMaterial(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarGestionDetalleIngresoMaterialSinPago" resultType="DetalleIngresoMaterial" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionDetalleIngresoMaterialSinPago(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarGestionDetalleIngresoMaterialConPago" resultType="DetalleIngresoMaterial" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionDetalleIngresoMaterialConPago(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<update id="eliminarDetalleIngresoMaterial"  statementType="CALLABLE"  parameterType="DetalleIngresoMaterial">
+	    {call eliminarDetalleIngresoMaterial(#{idDetalleIngresoMaterial},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	<select id="existeDetalleIngresoMaterial" resultType="Integer" statementType="CALLABLE" parameterType="HashMap">
+		{call existeDetalleIngresoMaterial(#{nroDocumento},#{tipoPago})}
+	</select>
+	
+	
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.MaterialAlmacenDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="MaterialAlmacen">
+	     {call insertarMaterialAlmacen(
+			#{idMaterial},
+			#{idAlmacen},
+			#{stockActual},			
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idMaterialAlmacen , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="MaterialAlmacen">
+	     {call actualizarMaterialAlmacen(
+	        #{idMaterialAlmacen},
+			#{idMaterial},
+			#{idAlmacen},
+			#{stockActual},	
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="MaterialAlmacen" statementType="CALLABLE" parameterType="Integer">
+		{call listarMaterialAlmacen(#{idMaterialAlmacen},null,null,null)}
+	</select>
+	
+	<select id="listarMaterialAlmacen" resultType="MaterialAlmacen" statementType="CALLABLE" parameterType="MaterialAlmacen">
+		{call listarMaterialAlmacen(#{idMaterialAlmacen},#{idAlmacen},#{idMaterial},#{stRegi})}
+	</select>
+		
+	<update id="eliminarMaterialAlmacen"  statementType="CALLABLE"  parameterType="MaterialAlmacen">
+	    {call eliminarMaterialAlmacen(#{idMaterialAlmacen},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	<select id="existeMaterialAlmacen" resultType="Integer" statementType="CALLABLE" parameterType="HashMap">
+		{call existeMaterialAlmacen(#{idMaterial},#{idAlmacen})}
+	</select>
+	
+	
+</mapper>

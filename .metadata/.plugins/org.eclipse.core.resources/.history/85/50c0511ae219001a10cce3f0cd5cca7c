@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.DetalleOrdenCompraDao">
+    
+	
+	 <insert id="insertar" statementType="CALLABLE"  parameterType="DetalleOrdenCompra">
+	     {call insertarDetalleOrdenCompra(
+	        #{idOrdenCompra},
+			#{idMaterial},
+			#{cantidadMaterial},
+			#{precioUnitario},
+			#{subTotal},			
+			#{idUsuaCrea},
+			#{deTermCrea},
+			#{idDetalleOrdenCompra , javaType=java.lang.Integer, jdbcType=NUMERIC, mode=OUT}
+	     )}	     
+	</insert>
+	
+	<update id="actualizar"  statementType="CALLABLE"  parameterType="DetalleOrdenCompra">
+	     {call actualizarDetalleOrdenCompra(
+	        #{idDetalleOrdenCompra},
+			#{idOrdenCompra},
+			#{idMaterial},
+			#{cantidadMaterial},
+			#{precioUnitario},
+			#{subTotal},		
+			#{idUsuaModi},
+			#{deTermModi}
+	    )}
+	</update>
+	
+	<select id="obtener" resultType="DetalleOrdenCompra" statementType="CALLABLE" parameterType="Integer">
+		{call listarDetalleOrdenCompra(#{idDetalleOrdenCompra},null,null)}
+	</select>
+	
+	<select id="listarDetalleOrdenCompra" resultType="DetalleOrdenCompra" statementType="CALLABLE" parameterType="DetalleOrdenCompra">
+		{call listarDetalleOrdenCompra(#{idDetalleOrdenCompra},#{stRegi},#{idOrdenCompra})}
+	</select>
+	
+	
+	<select id="listarGestionDetalleOrdenCompra" resultType="DetalleOrdenCompra" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionDetalleOrdenCompra(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarGestionDetalleOrdenCompraSinPago" resultType="DetalleOrdenCompra" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionDetalleOrdenCompraSinPago(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<select id="listarGestionDetalleOrdenCompraConPago" resultType="DetalleOrdenCompra" statementType="CALLABLE" parameterType="HashMap">
+		{call listarGestionDetalleOrdenCompraConPago(#{idMercado},#{stRegi},#{fechaInicio},#{fechaFin})}
+	</select>
+	
+	<update id="eliminarDetalleOrdenCompra"  statementType="CALLABLE"  parameterType="DetalleOrdenCompra">
+	    {call eliminarDetalleOrdenCompra(#{idDetalleOrdenCompra},#{idUsuaModi},#{deTermModi})}
+	</update>
+	
+	<select id="existeDetalleOrdenCompra" resultType="Integer" statementType="CALLABLE" parameterType="HashMap">
+		{call existeDetalleOrdenCompra(#{nroDocumento},#{tipoPago})}
+	</select>
+	
+	 
+	 <delete id="eliminarDetallePorOrdenCompra" parameterType="Integer">
+	  delete from detalle_orden_compra where idOrdenCompra= #{idOrdenCompra}
+	</delete>
+	
+</mapper>

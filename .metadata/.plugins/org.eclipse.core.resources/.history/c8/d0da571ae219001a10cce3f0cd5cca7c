@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pe.com.sisgedo.core.dao.UbigeoDao" >
+	
+	<resultMap id="resultadoBusqueda" type="java.util.Map">
+		
+	</resultMap>
+	
+
+    <!-- INICIO requerimiento JAGUILARS Ubigeo -->
+    
+    <parameterMap id="parametrosBusqueda" type="java.util.Map">
+        <parameter property="idDepartamento"			jdbcType="VARCHAR"	javaType="java.lang.String"		mode="IN" />
+        <parameter property="idProvincia"				jdbcType="VARCHAR"	javaType="java.lang.String"		mode="IN" />
+        <parameter property="idDistrito"				jdbcType="VARCHAR"	javaType="java.lang.String"		mode="IN" />
+        <parameter property="hub"				        jdbcType="VARCHAR"	javaType="java.lang.String"		mode="IN" />
+        <parameter property="resultado"				    jdbcType="CURSOR"	javaType="java.sql.ResultSet"	mode="OUT"	resultMap="resultadoBusqueda"/>		
+    </parameterMap>
+    
+    <select id="buscarUbigeos" statementType="CALLABLE" parameterMap="parametrosBusqueda">
+		{ CALL sisgedo.PKG_GESTION.sp_ubigeos(?,?, ?,?,?) }
+	</select>
+	
+
+	
+	
+	<select id="obtener" resultType="Ubigeo" parameterType="String">
+<!--		SELECT ub.id_Ubigeo as idUbigeo,
+		       ub.id_departamento as idDepartamento, 
+		       ub.id_provincia as idProvincia,
+		       ub.id_distrito as idDistrito,
+		       ub.id_pa_zona as idPaZona, -->
+<!-- 		       ub.de_iata, -->
+<!-- 		       ub.nu_terrestre, -->
+<!-- 		       ub.nu_aereo, -->
+<!-- 		       ub.nu_km, -->
+<!--		       de.de_departamento as descCortaDpto, 
+		       pr.de_provincia as descCortaProv, 
+		       di.de_distrito as descCortaDist, 
+		       tipo_doc.de_corta as de_zona, 
+		       hu.de_hub as deUbigeo,
+		       hu.id_hub as idHub,
+		 	   decode(ub.st_regi,'A','Activo','Anulado') AS estado
+		FROM sisgedo.Ubigeo ub
+			LEFT JOIN (SELECT dp.ns_det_parametro, dp.de_corta FROM sisgedo.detalle_parametro dp WHERE dp.ns_parametro = 33) tipo_doc ON tipo_doc.ns_det_parametro = ub.id_pa_zona
+			LEFT JOIN sisgedo.departamento de ON de.id_departamento = ub.id_departamento
+			LEFT JOIN sisgedo.provincia pr ON pr.id_provincia = ub.id_provincia
+			                               AND pr.id_departamento = ub.id_departamento
+			LEFT JOIN sisgedo.distrito di ON di.id_distrito = ub.id_distrito
+			                              AND di.id_provincia = ub.id_provincia
+			                              AND di.id_departamento = ub.id_departamento
+			LEFT JOIN sisgedo.hub_ubigeo hb ON hb.id_ubigeo = ub.id_ubigeo
+			LEFT JOIN sisgedo.hub hu ON hu.id_hub = hb.id_hub 
+			-->
+		
+			SELECT 
+				ub.id_Ubigeo as idUbigeo,
+				ub.id_departamento as idDepartamento, 
+				ub.id_provincia as idProvincia,
+				ub.id_distrito as idDistrito,
+				ub.id_pa_zona as idPaZona,
+				de.de_departamento as descCortaDpto,
+				pv.de_provincia as descCortaProv,
+				di.de_distrito as descCortaDist,
+				dp.de_det_parametro as de_zona,
+		        h.de_hub as deUbigeo,
+		        hu.id_hub as idHub,
+		        hu.nu_iata as iata,
+		        hu.ca_km as km,
+		        hu.nu_tiempo_terrestre as tiempoTerrestre,
+		        hu.nu_tiempo_aereo as tiempoAereo,
+		        decode(ub.st_regi,'A','Activo','Anulado') AS estado,
+		        ub.id_zona as idZonaGeografica
+			FROM sisgedo.ubigeo ub
+				INNER JOIN sisgedo.departamento de on de.id_departamento = ub.id_departamento
+				INNER JOIN sisgedo.provincia pv on pv.id_departamento = ub.id_departamento and pv.id_provincia = ub.id_provincia
+				INNER JOIN sisgedo.distrito di on di.id_departamento = ub.id_departamento and di.id_provincia = ub.id_provincia and di.id_distrito = ub.id_distrito
+				LEFT JOIN sisgedo.detalle_parametro dp on dp.ns_det_parametro = ub.id_pa_zona
+				LEFT JOIN sisgedo.hub_ubigeo hu on hu.id_ubigeo = ub.id_ubigeo
+				LEFT JOIN sisgedo.hub h on h.id_hub = hu.id_hub		
+			WHERE ub.id_Ubigeo = #{idUbigeo}
+
+	</select>
+	
+	<select id="validarUbigeo" resultType="Integer" parameterType="String">
+	  SELECT COUNT(ub.id_Ubigeo) cant FROM sisgedo.Ubigeo ub WHERE ub.id_Ubigeo = #{idUbigeo}
+	</select>
+	
+	<select id="validarHubUbigeo" resultType="Integer" parameterType="String">
+	  SELECT COUNT(ub.id_hub) cant FROM sisgedo.hub_ubigeo ub WHERE ub.id_Ubigeo = #{idUbigeo}
+	</select>
+
+                        
+	 <insert id="insertar" parameterType="Ubigeo" statementType="CALLABLE">
+	   {call sisgedo.PKG_GESTION.sp_insert_ubigeo(	   	      
+			#{idDistrito}
+			,#{deUbigeo}                
+			,#{idProvincia}                
+			,#{idDepartamento}             
+  		    ,#{idUbigeo}              
+  		    ,#{idPaZona}  
+  		    ,#{idUsuaCrea}
+  		    ,#{deTermCrea}              
+  		    ,#{descCortaDpto}            
+  		    ,#{descCortaProv} 
+  		    ,#{descCortaDist}
+  		    ,#{desMotivoAnulacion}
+  		    ,#{idZonaGeografica}		    		                    
+	   )}
+    </insert>
+      	
+    <update id="actualizar" parameterType="Ubigeo" statementType="CALLABLE">
+	   {call sisgedo.PKG_GESTION.sp_update_ubigeo(	   	      
+			#{idDistrito}
+			,#{deUbigeo}
+			,#{idProvincia}
+			,#{idDepartamento}
+  		    ,#{idUbigeo}
+  		    ,#{idPaZona}
+  		    ,#{descCortaDpto}
+  		    ,#{descCortaProv}
+  		    ,#{descCortaDist}
+  		    ,#{desMotivoAnulacion}
+  		    ,#{idUsuaModi}
+  		    ,#{deTermModi}
+  		    ,#{stRegi}
+  		    ,#{idZonaGeografica}     
+	   )}
+    </update>
+    
+    <update id="actualizarHubUbigeo" parameterType="HashMap" statementType="CALLABLE">
+	   {call sisgedo.PKG_GESTION.sp_update_hub_ubigeo(
+  		     #{idUbigeo}              
+  		    ,#{idUsuaModi}  		   
+  		    ,#{deTermModi}  
+  		    ,#{stRegi}		                    
+	   )}
+    </update>
+    
+    <select id="obtenerHubUbigeo" resultType="Integer" parameterType="String">
+      SELECT ub.id_hub FROM sisgedo.hub_ubigeo ub WHERE ub.id_Ubigeo = #{idUbigeo}
+    </select>
+    
+	
+    <!-- FIN requerimiento JAGUILARS Ubigeo -->
+</mapper>
+
